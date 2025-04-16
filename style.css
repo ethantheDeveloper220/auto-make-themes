@@ -66,3 +66,13 @@ button:hover {
     border-radius: 5px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
+
+pre {
+    background-color: #1d1d1d;
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    max-width: 600px;
+    margin-top: 20px;
+}
