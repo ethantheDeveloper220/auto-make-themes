@@ -1,15 +1,20 @@
-const API_KEY = 'rGT7ERivZiKV_BRLrY50fKvgrZATU4I6VviqSAo3IeY';  // Add your Unsplash API key here
+const API_KEY = 'rGT7ERivZiKV_BRLrY50fKvgrZATU4I6VviqSAo3IeY';  // Unsplash API Key
 const UNSPLASH_URL = 'https://api.unsplash.com/search/photos';
 
 // Function to search for images from Unsplash
 async function searchImages(query) {
-    const response = await fetch(`${UNSPLASH_URL}?query=${query}&client_id=${API_KEY}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`${UNSPLASH_URL}?query=${query}&client_id=${API_KEY}`);
+        const data = await response.json();
 
-    if (data && data.results) {
-        return data.results.map(image => image.urls.small);  // Get small images from the search result
-    } else {
-        console.error("No images found or API error.");
+        if (data && data.results) {
+            return data.results.map(image => image.urls.small);  // Get small image URLs
+        } else {
+            console.error("No images found or API error.");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching images:", error);
         return [];
     }
 }
@@ -29,7 +34,7 @@ async function generateTheme() {
     // Search for images using the Unsplash API
     if (imageQuery) {
         const images = await searchImages(imageQuery);
-        displayImages(images);
+        displayImages(images);  // Display found images
     }
 }
 
@@ -42,6 +47,34 @@ function displayImages(images) {
         const imgElement = document.createElement("img");
         imgElement.src = imageUrl;
         imgElement.alt = "Search Image";
+        imgElement.onclick = () => addImageToCSS(imageUrl);  // When an image is clicked, it will be added to the theme
         container.appendChild(imgElement);
     });
 }
+
+// Function to add selected image to the theme and generate the CSS code
+function addImageToCSS(imageUrl) {
+    const bgColor = document.getElementById("bgColor").value;
+    const btnColor = document.getElementById("btnColor").value;
+
+    // Create the CSS code with the selected image
+    const generatedCSS = `
+        body {
+            background-color: ${bgColor};
+            background-image: url('${imageUrl}');
+            background-size: cover;
+        }
+
+        button {
+            background-color: ${btnColor};
+            color: white;
+        }
+    `;
+
+    // Display the generated CSS code in the console or a text area
+    console.log("Generated CSS:\n", generatedCSS);
+    
+    // Optional: Display the generated CSS on the webpage for the user
+    document.getElementById("generatedCSS").textContent = generatedCSS;
+}
+
